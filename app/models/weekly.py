@@ -1,7 +1,7 @@
 """"""
 
 from datetime import date, timedelta
-from pydantic import BaseModel, NonNegativeInt, Field as field, computed_field, model_validator, ValidationError
+from pydantic import BaseModel, NonNegativeInt, Field as field, computed_field, model_validator
 from sqlmodel import SQLModel, Field, Session, select
 from app.database import engine
 
@@ -31,7 +31,7 @@ class WeeklyReport(BaseModel):
     def check_dates(self) -> "WeeklyReport":
         """Ensure that the start date is a week less than the end-date."""
 
-        if self.date_start != self.date_end - timedelta(days=7):
+        if self.date_start != self.date_end - timedelta(days=6):
             raise ValueError("Invalid dates provided.")
         return self
 
