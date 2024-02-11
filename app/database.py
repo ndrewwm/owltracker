@@ -5,7 +5,7 @@ from sqlmodel import create_engine
 
 SQLALCHEMY_DATABASE_URL = os.environ.get(
     "SQLALCHEMY_DATABASE_URL",
-    default="sqlite:////app/app.db",
+    default="sqlite:///app/app.db",
 )
 
 engine = create_engine(
