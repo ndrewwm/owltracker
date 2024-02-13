@@ -1,7 +1,13 @@
 """"""
 
 from datetime import date, timedelta
-from pydantic import BaseModel, NonNegativeInt, Field as field, computed_field, model_validator
+from pydantic import (
+    BaseModel,
+    NonNegativeInt,
+    Field as field,
+    computed_field,
+    model_validator,
+)
 from sqlmodel import SQLModel, Field, Session, select
 from app.database import engine
 

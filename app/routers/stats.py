@@ -7,10 +7,10 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 from app.database import engine
 from app.models.weekly import WeeklyReport, WeeklyStats, upsert_weekly
 
-stats = APIRouter(prefix="/owl/stats")
+owl = APIRouter()
 
 
-@stats.get("/week", tags=["weekly stats"])
+@owl.get("/week", tags=["weekly stats"])
 def get_week(date_end: datetime.date | None = None) -> WeeklyStats:
     """Get a weekly report, based on the supplied date. Defaults to today."""
 
@@ -30,7 +30,7 @@ def get_week(date_end: datetime.date | None = None) -> WeeklyStats:
     return row
 
 
-@stats.get("/weeks", tags=["weekly stats"])
+@owl.get("/weeks", tags=["weekly stats"])
 def get_weeks(
     start: datetime.date = datetime.date(1900, 1, 1),
     end: datetime.date = datetime.date(2999, 12, 31),
@@ -38,8 +38,10 @@ def get_weeks(
     """Get a range of weekly reports, based on start/end dates."""
 
     with Session(engine) as session:
-        query = select(WeeklyStats).where(
-            between(WeeklyStats.date_end, start, end)
+        query = (
+            select(WeeklyStats)
+            .where(between(WeeklyStats.date_end, start, end))
+            .order_by(WeeklyStats.date_end)
         )
         rows = session.exec(query).all()
 
@@ -49,7 +51,7 @@ def get_weeks(
     return rows
 
 
-@stats.put("/week", tags=["weekly stats", "report"])
+@owl.put("/week", tags=["weekly stats", "report"])
 def report_week(data: WeeklyReport) -> dict[str, str]:
     """Report on a single week of activity."""
 
@@ -59,7 +61,7 @@ def report_week(data: WeeklyReport) -> dict[str, str]:
     return {"detail": "Week recorded."}
 
 
-@stats.put("/weeks", tags=["weekly stats", "report"])
+@owl.put("/weeks", tags=["weekly stats", "report"])
 def report_weeks(data: list[WeeklyReport]) -> dict[str, str]:
     """Report on one or more weeks of activity. Meant to store metrics provided via Duolingo's
     weekly email."""
@@ -71,11 +73,11 @@ def report_weeks(data: list[WeeklyReport]) -> dict[str, str]:
     return {"detail": f"{len(data)} weeks recorded."}
 
 
-@stats.delete("/week", tags=["weekly stats"])
+@owl.delete("/week", tags=["weekly stats"])
 def delete_week():
     """"""
 
 
-@stats.delete("/weeks", tags=["weekly stats"])
+@owl.delete("/weeks", tags=["weekly stats"])
 def delete_week():
     """"""

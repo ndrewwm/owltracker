@@ -7,10 +7,10 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 from app.database import engine
 from app.models.freeze import FreezeReport, Freeze, upsert_freeze
 
-streak = APIRouter(prefix="/owl/streak")
+owl = APIRouter()
 
 
-@streak.get("/freeze", tags=["freezes"])
+@owl.get("/freeze", tags=["freezes"])
 def get_freeze(date: datetime.date = datetime.date.today()) -> Freeze:
     """Check the status of a date."""
 
@@ -24,7 +24,7 @@ def get_freeze(date: datetime.date = datetime.date.today()) -> Freeze:
     return row
 
 
-@streak.get("/freezes", tags=["freezes"])
+@owl.get("/freezes", tags=["freezes"])
 def get_freezes(
     start: datetime.date = datetime.date(1900, 1, 1),
     end: datetime.date = datetime.date(2999, 12, 31),
@@ -47,7 +47,7 @@ def get_freezes(
     return rows
 
 
-@streak.put("/freeze", tags=["freezes", "report"])
+@owl.put("/freeze", tags=["freezes", "report"])
 def report_freeze(data: FreezeReport) -> dict[str, str]:
     """Report the usage of a streak freeze."""
 
@@ -57,7 +57,7 @@ def report_freeze(data: FreezeReport) -> dict[str, str]:
     return {"detail": f"Freeze recorded for date: {freeze.date}."}
 
 
-@streak.put("/freezes", tags=["freezes", "report"])
+@owl.put("/freezes", tags=["freezes", "report"])
 def report_freezes(data: list[FreezeReport]) -> dict[str, str]:
     """Report the usage of multiple streak freezes."""
 
@@ -68,7 +68,7 @@ def report_freezes(data: list[FreezeReport]) -> dict[str, str]:
     return {"detail": f"{len(freezes)} freezes recorded."}
 
 
-@streak.delete("/freeze", tags=["freezes"])
+@owl.delete("/freeze", tags=["freezes"])
 def delete_freeze(date: datetime.date = datetime.date.today()) -> dict[str, str]:
     """Delete the record for a given date."""
 
@@ -85,7 +85,7 @@ def delete_freeze(date: datetime.date = datetime.date.today()) -> dict[str, str]
     return {"detail": "Freeze deleted."}
 
 
-@streak.delete("/freezes", tags=["freezes"])
+@owl.delete("/freezes", tags=["freezes"])
 def delete_freezes(start: datetime.date, end: datetime.date) -> dict[str, str]:
     """Delete several records between a start and end date."""
 
@@ -102,4 +102,3 @@ def delete_freezes(start: datetime.date, end: datetime.date) -> dict[str, str]:
         session.commit()
 
     return {"detail": f"{len(rows)} freezes deleted."}
-

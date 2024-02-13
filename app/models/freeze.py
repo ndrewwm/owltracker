@@ -53,4 +53,3 @@ def upsert_freeze(freeze: Freeze):
             session.add(freeze)
             session.commit()
             session.refresh(freeze)
-
